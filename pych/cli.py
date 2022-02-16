@@ -10,7 +10,7 @@ from pych.client import (
 )
 
 
-def cli():
+def main():
     parser = ArgumentParser()
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--database", default=DEFAULT_DATABASE)

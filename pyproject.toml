@@ -24,6 +24,9 @@ pytest-cov = "^3.0.0"
 [tool.poetry.extras]
 orjson = ["orjson"]
 
+[tool.poetry.scripts]
+pych = 'pych.cli:main'
+
 [tool.mypy]
 implicit_reexport = false
 strict_equality = true

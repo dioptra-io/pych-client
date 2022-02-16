@@ -1,4 +1,4 @@
-from pych.cli import cli
+from pych.cli import main
 
 if __name__ == "__main__":
-    cli()
+    main()
