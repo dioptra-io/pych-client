@@ -1,11 +1,12 @@
 [tool.poetry]
-name = "pych"
+name = "dioptra-pych"
 version = "0.1.1"
 description = ""
 authors = ["Maxime Mouchet <maxime.mouchet@lip6.fr>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/dioptra-io/pych"
+packages = [{ include = "pych" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
