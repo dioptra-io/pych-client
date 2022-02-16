@@ -1,4 +1,4 @@
-# dioptra-pych
+# pych-client
 
 [![Coverage][coverage-badge]][coverage-url]
 [![PyPI Status][pypi-workflow-badge]][pypi-workflow-url]
@@ -9,15 +9,15 @@
 
 ```bash
 # Default Python JSON parser:
-pip install dioptra-pych
+pip install pych-client
 # Faster orjson parser:
-pip install dioptra-pych[orjson]
+pip install pych-client[orjson]
 ```
 
 ## Usage
 
 ```python
-from pych import ClickHouseClient
+from pych_client import ClickHouseClient
 params = {"table": "test_pych"}
 with ClickHouseClient() as client:
     client.text('''
@@ -30,18 +30,25 @@ with ClickHouseClient() as client:
 # [{'a': '1', 'b': '2'}, {'a': '3', 'b': '4'}, {'a': '5', 'b': '6'}, {'a': '7', 'b': '8'}]
 ```
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/dioptra-io/pych?logo=codecov&logoColor=white
+## Command-line interface
 
-[coverage-url]: https://codecov.io/gh/dioptra-io/pych
+```bash
+pipx install pych-client
+pych-client --help
+```
 
-[pypi-workflow-badge]: https://img.shields.io/github/workflow/status/dioptra-io/pych/PyPI?logo=github&label=pypi
+[coverage-badge]: https://img.shields.io/codecov/c/github/dioptra-io/pych-client?logo=codecov&logoColor=white
 
-[pypi-workflow-url]: https://github.com/dioptra-io/pych/actions/workflows/pypi.yml
+[coverage-url]: https://codecov.io/gh/dioptra-io/pych-client
 
-[tests-workflow-badge]: https://img.shields.io/github/workflow/status/dioptra-io/pych/Tests?logo=github&label=tests
+[pypi-workflow-badge]: https://img.shields.io/github/workflow/status/dioptra-io/pych-client/PyPI?logo=github&label=pypi
 
-[tests-workflow-url]: https://github.com/dioptra-io/pych/actions/workflows/tests.yml
+[pypi-workflow-url]: https://github.com/dioptra-io/pych-client/actions/workflows/pypi.yml
 
-[pypi-badge]: https://img.shields.io/pypi/v/dioptra-pych?logo=pypi&logoColor=white
+[tests-workflow-badge]: https://img.shields.io/github/workflow/status/dioptra-io/pych-client/Tests?logo=github&label=tests
 
-[pypi-url]: https://pypi.org/project/dioptra-pych/
+[tests-workflow-url]: https://github.com/dioptra-io/pych-client/actions/workflows/tests.yml
+
+[pypi-badge]: https://img.shields.io/pypi/v/pych-client?logo=pypi&logoColor=white
+
+[pypi-url]: https://pypi.org/project/pych-client/

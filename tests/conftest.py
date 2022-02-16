@@ -1,6 +1,6 @@
 import pytest
 
-from pych import ClickHouseClient
+from pych_client import ClickHouseClient
 
 
 @pytest.fixture

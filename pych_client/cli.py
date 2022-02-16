@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from pych.client import (
+from pych_client.client import (
     DEFAULT_BASE_URL,
     DEFAULT_DATABASE,
     DEFAULT_PASSWORD,
