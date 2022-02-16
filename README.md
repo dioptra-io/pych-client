@@ -17,6 +17,7 @@ pip install dioptra-pych[orjson]
 ## Usage
 
 ```python
+from pych import ClickHouseClient
 params = {"table": "test_pych"}
 with ClickHouseClient() as client:
     client.text('''
