@@ -1,5 +1,5 @@
 import builtins
-from typing import AsyncIterator, Optional
+from typing import AsyncIterator, List, Optional
 
 import httpx
 
@@ -128,7 +128,7 @@ class AsyncClickHouseClient:
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
-    ) -> list[dict]:
+    ) -> List[dict]:
         settings = settings or {}
         settings |= {
             "default_format": "JSONEachRow",

@@ -1,5 +1,5 @@
 import builtins
-from typing import Iterator, Optional
+from typing import Iterator, List, Optional
 
 import httpx
 
@@ -136,7 +136,7 @@ class ClickHouseClient:
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
-    ) -> list[dict]:
+    ) -> List[dict]:
         settings = settings or {}
         settings |= {
             "default_format": "JSONEachRow",
