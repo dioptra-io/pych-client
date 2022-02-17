@@ -1,6 +1,6 @@
 import builtins
 import json
-from typing import Iterator, Optional
+from typing import AsyncIterator, Optional
 
 import httpx
 
@@ -10,21 +10,7 @@ from pych_client.exceptions import ClickHouseException
 from pych_client.typing import Data, Params, Settings
 
 
-class ClickHouseClient:
-    """
-    >>> params = {"table": "test_pych"}
-    >>> with ClickHouseClient() as client:
-    ...     _ = client.text("DROP TABLE IF EXISTS {table:Identifier}", params)
-    ...     _ = client.text('''
-    ...         CREATE TABLE {table:Identifier} (a Int64, b Int64)
-    ...         ENGINE MergeTree() ORDER BY (a, b)
-    ...     ''', params)
-    ...     _ = client.text("INSERT INTO {table:Identifier} VALUES", params, "(1, 2), (3, 4)")
-    ...     _ = client.text("INSERT INTO {table:Identifier} VALUES", params, [b"(5, 6)", b"(7, 8)"])
-    ...     client.json("SELECT * FROM {table:Identifier} ORDER BY a", params)
-    [{'a': '1', 'b': '2'}, {'a': '3', 'b': '4'}, {'a': '5', 'b': '6'}, {'a': '7', 'b': '8'}]
-    """
-
+class AsyncClickHouseClient:
     def __init__(
         self,
         base_url: Optional[str] = None,
@@ -38,7 +24,7 @@ class ClickHouseClient:
         base_url, database, username, password = get_credentials(
             base_url, database, username, password
         )
-        self.client = httpx.Client(
+        self.client = httpx.AsyncClient(
             base_url=base_url,
             headers={"Accept-encoding": "gzip"},
             params={"database": database, "user": username, "password": password},
@@ -47,20 +33,20 @@ class ClickHouseClient:
             ),
         )
 
-    def __enter__(self):
+    async def __aenter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.client.close()
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.client.aclose()
 
-    def execute(
+    async def execute(
         self,
         query: str,
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
     ) -> httpx.Response:
-        r = self.client.post(
+        r = await self.client.post(
             "/", content=data, params=get_http_params(query, params, settings)
         )
         try:
@@ -69,7 +55,7 @@ class ClickHouseClient:
             raise ClickHouseException(r.text) from e
         return r
 
-    def stream(
+    async def stream(
         self,
         query: str,
         params: Params = None,
@@ -80,45 +66,51 @@ class ClickHouseClient:
             "POST", "/", content=data, params=get_http_params(query, params, settings)
         )
 
-    def bytes(
+    async def bytes(
         self,
         query: str,
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
     ) -> builtins.bytes:
-        return self.execute(query, params, data, settings).content  # type: ignore
+        r = await self.execute(query, params, data, settings)
+        return r.content  # type: ignore
 
-    def iter_bytes(
+    async def iter_bytes(
         self,
         query: str,
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
-    ) -> Iterator[builtins.bytes]:
-        with self.stream(query, params, data, settings) as r:
-            yield from r.iter_bytes()
+    ) -> AsyncIterator[builtins.bytes]:
+        stream = await self.stream(query, params, data, settings)
+        async with stream as r:
+            async for chunk in r.aiter_bytes():
+                yield chunk
 
-    def text(
+    async def text(
         self,
         query: str,
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
     ) -> str:
-        return self.execute(query, params, data, settings).text.strip()  # type: ignore
+        r = await self.execute(query, params, data, settings)
+        return r.text.strip()  # type: ignore
 
-    def iter_text(
+    async def iter_text(
         self,
         query: str,
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
-    ) -> Iterator[str]:
-        with self.stream(query, params, data, settings) as r:
-            yield from r.iter_lines()
+    ) -> AsyncIterator[str]:
+        stream = await self.stream(query, params, data, settings)
+        async with stream as r:
+            async for line in r.aiter_lines():
+                yield line
 
-    def json(
+    async def json(
         self,
         query: str,
         params: Params = None,
@@ -127,21 +119,21 @@ class ClickHouseClient:
     ) -> list[dict]:
         settings = settings or {}
         settings["default_format"] = "JSONEachRow"
-        result = self.text(query, params, data, settings)
+        result = await self.text(query, params, data, settings)
         return [json.loads(line) for line in result.split("\n") if line]
         # except JSONDecodeError as e:
         #     # TODO: How to handle exception formatting in this case?
         #     raise ClickHouseException(result) from e
 
-    def iter_json(
+    async def iter_json(
         self,
         query: str,
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
-    ) -> Iterator[dict]:
+    ) -> AsyncIterator[dict]:
         settings = settings or {}
         settings["default_format"] = "JSONEachRow"
-        for line in self.iter_text(query, params, data, settings):
+        async for line in self.iter_text(query, params, data, settings):
             if line:
                 yield json.loads(line)

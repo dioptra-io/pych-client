@@ -18,6 +18,7 @@ pip install pych-client[orjson]
 
 ```python
 from pych_client import ClickHouseClient
+
 params = {"table": "test_pych"}
 with ClickHouseClient() as client:
     client.text('''
@@ -30,12 +31,29 @@ with ClickHouseClient() as client:
 # [{'a': '1', 'b': '2'}, {'a': '3', 'b': '4'}, {'a': '5', 'b': '6'}, {'a': '7', 'b': '8'}]
 ```
 
-## Command-line interface
+### Command-line interface
 
 ```bash
 pipx install pych-client
 pych-client --help
 ```
+
+### Credential provider chain
+
+The client looks for credentials in a way similar to
+the [AWS SDK][aws-sdk]:
+
+1. If one of `base_url`, `database`, `username` or `password` is specified, these values will be used.
+2. If none of the previous values are specified, and one of `PYCH_BASE_URL`, `PYCH_DATABASE`, `PYCH_USERNAME`
+   or `PYCH_PASSWORD` environment variables are present, these values will be used.
+3. If none of the previous values are specified, and the file `~/.config/pych-client/credentials.json` exists, the
+   fields `base_url`, `database` and `username` and `password` will be used.
+4. If none of the previous values are specified, the values `http://localhost:8213`, `default` and `default`
+   will be used.
+
+
+
+[aws-sdk]: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/dioptra-io/pych-client?logo=codecov&logoColor=white
 

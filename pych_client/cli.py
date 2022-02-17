@@ -3,24 +3,18 @@ import readline
 from argparse import ArgumentParser
 from pathlib import Path
 
-from pych_client.client import (
-    DEFAULT_BASE_URL,
-    DEFAULT_DATABASE,
-    DEFAULT_PASSWORD,
-    DEFAULT_USERNAME,
-    ClickHouseClient,
-    ClickHouseException,
-)
+from pych_client import ClickHouseClient
+from pych_client.exceptions import ClickHouseException
 
 HISTFILE = Path.home() / ".pych-client-history"
 
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
-    parser.add_argument("--database", default=DEFAULT_DATABASE)
-    parser.add_argument("--username", default=DEFAULT_USERNAME)
-    parser.add_argument("--password", default=DEFAULT_PASSWORD)
+    parser.add_argument("--base-url", default=None)
+    parser.add_argument("--database", default=None)
+    parser.add_argument("--username", default=None)
+    parser.add_argument("--password", default=None)
     args = parser.parse_args()
 
     try:
