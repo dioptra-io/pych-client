@@ -1,5 +1,4 @@
 import builtins
-import json
 from typing import AsyncIterator, Optional
 
 import httpx
@@ -8,6 +7,11 @@ from pych_client.base import get_credentials, get_http_params
 from pych_client.constants import DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_WRITE_TIMEOUT
 from pych_client.exceptions import ClickHouseException
 from pych_client.typing import Data, Params, Settings
+
+try:
+    import orjson as json
+except ModuleNotFoundError:
+    import json  # type: ignore
 
 
 class AsyncClickHouseClient:

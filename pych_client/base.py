@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Optional, Tuple
 
@@ -14,12 +15,6 @@ from pych_client.constants import (
 )
 from pych_client.logger import logger
 from pych_client.typing import Params, Settings
-
-try:
-    import orjson as json
-except ModuleNotFoundError:
-    import json  # type: ignore
-
 
 # TODO: Benchmark different functions
 
