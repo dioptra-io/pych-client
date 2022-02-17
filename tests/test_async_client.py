@@ -30,3 +30,7 @@ async def test_execute_json_iter(async_client):
         x async for x in async_client.iter_json("SELECT arrayJoin([1, 2, 3]) AS x")
     ]
     assert actual == expected
+
+
+async def test_execute_json_int64(async_client):
+    assert await async_client.json("SELECT toInt64(1) AS x") == [{"x": 1}]

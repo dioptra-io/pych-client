@@ -28,3 +28,7 @@ def test_execute_json_iter(client):
     expected = [{"x": 1}, {"x": 2}, {"x": 3}]
     actual = list(client.iter_json("SELECT arrayJoin([1, 2, 3]) AS x"))
     assert actual == expected
+
+
+def test_execute_json_int64(client):
+    assert client.json("SELECT toInt64(1) AS x") == [{"x": 1}]

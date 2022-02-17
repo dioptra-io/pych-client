@@ -122,7 +122,10 @@ class AsyncClickHouseClient:
         settings: Settings = None,
     ) -> list[dict]:
         settings = settings or {}
-        settings["default_format"] = "JSONEachRow"
+        settings |= {
+            "default_format": "JSONEachRow",
+            "output_format_json_quote_64bit_integers": 0,
+        }
         result = await self.text(query, params, data, settings)
         return [json.loads(line) for line in result.split("\n") if line]
         # except JSONDecodeError as e:
@@ -137,7 +140,10 @@ class AsyncClickHouseClient:
         settings: Settings = None,
     ) -> AsyncIterator[dict]:
         settings = settings or {}
-        settings["default_format"] = "JSONEachRow"
+        settings |= {
+            "default_format": "JSONEachRow",
+            "output_format_json_quote_64bit_integers": 0,
+        }
         async for line in self.iter_text(query, params, data, settings):
             if line:
                 yield json.loads(line)
