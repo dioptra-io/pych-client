@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pych-client"
-version = "0.2.4"
+version = "0.2.5"
 description = ""
 authors = ["Maxime Mouchet <maxime.mouchet@lip6.fr>"]
 license = "MIT"
