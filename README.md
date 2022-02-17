@@ -9,7 +9,7 @@ pych-client is a [ClickHouse][clickhouse] client for Python. It targets the HTTP
 features:
 - Sync (`ClickHouseClient`) and async (`AsyncClickHouseClient`) clients.
 - Streaming requests and responses.
-- Optionally load credentials from the environment variables, or from a configuration file.
+- Optionally load credentials from environment variables, or from a configuration file.
 
 ## Installation
 
