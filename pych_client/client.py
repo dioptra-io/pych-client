@@ -138,7 +138,8 @@ class ClickHouseClient:
         settings: Settings = None,
     ) -> List[dict]:
         settings = settings or {}
-        settings |= {
+        settings = {
+            **settings,
             "default_format": "JSONEachRow",
             "output_format_json_quote_64bit_integers": 0,
         }
@@ -156,7 +157,8 @@ class ClickHouseClient:
         settings: Settings = None,
     ) -> Iterator[dict]:
         settings = settings or {}
-        settings |= {
+        settings = {
+            **settings,
             "default_format": "JSONEachRow",
             "output_format_json_quote_64bit_integers": 0,
         }

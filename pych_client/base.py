@@ -56,7 +56,8 @@ def get_credentials(
 def get_http_params(query: str, params: Params, settings: Settings):
     http_params = {"query": query}
     if params:
-        http_params |= {f"param_{k}": v for k, v in params.items()}
+        query_params = {f"param_{k}": v for k, v in params.items()}
+        http_params = {**http_params, **query_params}
     if settings:
-        http_params |= settings
+        http_params = {**http_params, **settings}
     return http_params
