@@ -5,6 +5,12 @@
 [![Tests Status][tests-workflow-badge]][tests-workflow-url]
 [![PyPI][pypi-badge]][pypi-url]
 
+pych-client is a [ClickHouse][clickhouse] client for Python. It targets the HTTP interface and offers the following
+features:
+- Sync (`ClickHouseClient`) and async (`AsyncClickHouseClient`) clients.
+- Streaming requests and responses.
+- Optionally load credentials from the environment variables, or from a configuration file.
+
 ## Installation
 
 ```bash
@@ -40,8 +46,7 @@ pych-client --help
 
 ### Credential provider chain
 
-The client looks for credentials in a way similar to
-the [AWS SDK][aws-sdk]:
+The client looks for credentials in a way similar to the [AWS SDK][aws-sdk]:
 
 1. If one of `base_url`, `database`, `username` or `password` is specified, these values will be used.
 2. If none of the previous values are specified, and one of `PYCH_BASE_URL`, `PYCH_DATABASE`, `PYCH_USERNAME`
@@ -51,9 +56,9 @@ the [AWS SDK][aws-sdk]:
 4. If none of the previous values are specified, the values `http://localhost:8213`, `default` and `default`
    will be used.
 
-
-
 [aws-sdk]: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
+
+[clickhouse]: https://clickhouse.com
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/dioptra-io/pych-client?logo=codecov&logoColor=white
 
