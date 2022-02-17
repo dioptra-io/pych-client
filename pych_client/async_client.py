@@ -36,6 +36,14 @@ class AsyncClickHouseClient:
                 connect_timeout, read=read_write_timeout, write=read_write_timeout
             ),
         )
+        self.config = {
+            "base_url": base_url,
+            "database": database,
+            "username": username,
+            "password": password,
+            "connect_timeout": connect_timeout,
+            "read_write_timeout": read_write_timeout,
+        }
 
     async def __aenter__(self):
         return self
