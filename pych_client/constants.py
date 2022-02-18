@@ -5,8 +5,8 @@ CREDENTIALS_FILE = Path.home() / ".config" / "pych-client" / "credentials.json"
 BASE_URL_ENV = "PYCH_BASE_URL"
 DATABASE_ENV = "PYCH_DATABASE"
 USERNAME_ENV = "PYCH_USERNAME"
-
 PASSWORD_ENV = "PYCH_PASSWORD"
+
 DEFAULT_BASE_URL = "http://localhost:8123"
 DEFAULT_DATABASE = "default"
 DEFAULT_USERNAME = "default"
