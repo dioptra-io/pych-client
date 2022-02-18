@@ -9,7 +9,7 @@ homepage = "https://github.com/dioptra-io/pych-client"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-httpx = "^0.21.0"
+httpx = ">=0.21.0"
 orjson = {version = "^3.6.6", optional = true}
 
 [tool.poetry.dev-dependencies]
