@@ -9,7 +9,7 @@ from pych_client.exceptions import ClickHouseException
 HISTFILE = Path.home() / ".pych-client-history"
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser()
     parser.add_argument("--base-url", default=None)
     parser.add_argument("--database", default=None)

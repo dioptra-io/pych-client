@@ -1,5 +1,6 @@
 import builtins
-from typing import Iterator, List, Optional
+from types import TracebackType
+from typing import Any, Iterator, List, Optional, Type
 
 import httpx
 
@@ -59,10 +60,15 @@ class ClickHouseClient:
             "read_write_timeout": read_write_timeout,
         }
 
-    def __enter__(self):
+    def __enter__(self) -> "ClickHouseClient":
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
         self.client.close()
 
     def execute(
@@ -73,7 +79,9 @@ class ClickHouseClient:
         settings: Settings = None,
     ) -> httpx.Response:
         r = self.client.post(
-            "/", content=data, params=get_http_params(query, params, settings)
+            "/",
+            content=data,  # type: ignore
+            params=get_http_params(query, params, settings),
         )
         try:
             r.raise_for_status()
@@ -87,9 +95,12 @@ class ClickHouseClient:
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
-    ):
+    ) -> Any:
         return self.client.stream(
-            "POST", "/", content=data, params=get_http_params(query, params, settings)
+            "POST",
+            "/",
+            content=data,  # type: ignore
+            params=get_http_params(query, params, settings),
         )
 
     def bytes(
@@ -99,7 +110,7 @@ class ClickHouseClient:
         data: Data = None,
         settings: Settings = None,
     ) -> builtins.bytes:
-        return self.execute(query, params, data, settings).content  # type: ignore
+        return self.execute(query, params, data, settings).content
 
     def iter_bytes(
         self,
@@ -118,7 +129,7 @@ class ClickHouseClient:
         data: Data = None,
         settings: Settings = None,
     ) -> str:
-        return self.execute(query, params, data, settings).text.strip()  # type: ignore
+        return self.execute(query, params, data, settings).text.strip()
 
     def iter_text(
         self,

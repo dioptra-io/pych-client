@@ -24,10 +24,15 @@ def get_credentials(
     database: Optional[str],
     username: Optional[str],
     password: Optional[str],
-) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
+) -> Tuple[str, str, str, str]:
     if base_url or database or username or password:
         logger.debug("using credentials from arguments")
-        return base_url, database, username, password
+        return (
+            base_url or DEFAULT_BASE_URL,
+            database or DEFAULT_DATABASE,
+            username or DEFAULT_USERNAME,
+            password or DEFAULT_PASSWORD,
+        )
     if (
         BASE_URL_ENV in os.environ
         or DATABASE_ENV in os.environ
@@ -36,24 +41,24 @@ def get_credentials(
     ):
         logger.debug("using credentials from environment")
         return (
-            os.environ.get(BASE_URL_ENV),
-            os.environ.get(DATABASE_ENV),
-            os.environ.get(USERNAME_ENV),
-            os.environ.get(PASSWORD_ENV),
+            os.environ.get(BASE_URL_ENV, DEFAULT_BASE_URL),
+            os.environ.get(DATABASE_ENV, DEFAULT_DATABASE),
+            os.environ.get(USERNAME_ENV, DEFAULT_USERNAME),
+            os.environ.get(PASSWORD_ENV, DEFAULT_PASSWORD),
         )
     if CREDENTIALS_FILE.exists():
         logger.debug("using credentials from %s", CREDENTIALS_FILE)
         credentials = json.loads(CREDENTIALS_FILE.read_text())
         return (
-            credentials.get("base_url"),
-            credentials.get("database"),
-            credentials.get("username"),
-            credentials.get("password"),
+            credentials.get("base_url", DEFAULT_BASE_URL),
+            credentials.get("database", DEFAULT_DATABASE),
+            credentials.get("username", DEFAULT_USERNAME),
+            credentials.get("password", DEFAULT_PASSWORD),
         )
     return DEFAULT_BASE_URL, DEFAULT_DATABASE, DEFAULT_USERNAME, DEFAULT_PASSWORD
 
 
-def get_http_params(query: str, params: Params, settings: Settings):
+def get_http_params(query: str, params: Params, settings: Settings) -> dict:
     http_params = {"query": query}
     if params:
         query_params = {f"param_{k}": v for k, v in params.items()}

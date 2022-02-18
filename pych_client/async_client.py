@@ -1,5 +1,6 @@
 import builtins
-from typing import AsyncIterator, List, Optional
+from types import TracebackType
+from typing import Any, AsyncIterator, List, Optional, Type
 
 import httpx
 
@@ -45,10 +46,15 @@ class AsyncClickHouseClient:
             "read_write_timeout": read_write_timeout,
         }
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AsyncClickHouseClient":
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
         await self.client.aclose()
 
     async def execute(
@@ -59,7 +65,9 @@ class AsyncClickHouseClient:
         settings: Settings = None,
     ) -> httpx.Response:
         r = await self.client.post(
-            "/", content=data, params=get_http_params(query, params, settings)
+            "/",
+            content=data,  # type: ignore
+            params=get_http_params(query, params, settings),
         )
         try:
             r.raise_for_status()
@@ -73,7 +81,7 @@ class AsyncClickHouseClient:
         params: Params = None,
         data: Data = None,
         settings: Settings = None,
-    ):
+    ) -> Any:
         return self.client.stream(
             "POST", "/", content=data, params=get_http_params(query, params, settings)
         )
@@ -86,7 +94,7 @@ class AsyncClickHouseClient:
         settings: Settings = None,
     ) -> builtins.bytes:
         r = await self.execute(query, params, data, settings)
-        return r.content  # type: ignore
+        return r.content
 
     async def iter_bytes(
         self,
@@ -108,7 +116,7 @@ class AsyncClickHouseClient:
         settings: Settings = None,
     ) -> str:
         r = await self.execute(query, params, data, settings)
-        return r.text.strip()  # type: ignore
+        return r.text.strip()
 
     async def iter_text(
         self,
