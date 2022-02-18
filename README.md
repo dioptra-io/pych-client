@@ -5,11 +5,12 @@
 [![Tests Status][tests-workflow-badge]][tests-workflow-url]
 [![PyPI][pypi-badge]][pypi-url]
 
-pych-client is a [ClickHouse][clickhouse] client for Python. It targets the HTTP interface and offers the following
-features:
+pych-client is a [ClickHouse][clickhouse] client for Python built on top of [httpx](https://github.com/encode/httpx/).
+It targets the HTTP interface and offers the following features:
+
 - Sync (`ClickHouseClient`) and async (`AsyncClickHouseClient`) clients.
 - Streaming requests and responses.
-- Optionally load credentials from environment variables, or from a configuration file.
+- Load credentials from environment variables, or from a configuration file.
 
 ## Installation
 
@@ -25,22 +26,57 @@ pip install pych-client[orjson]
 ```python
 from pych_client import ClickHouseClient
 
-params = {"table": "test_pych"}
-with ClickHouseClient() as client:
+# See "Credential provider chain" for more information on credential specification.
+credentials = dict(
+    base_url="http://localhost:8123",
+    database="default",
+    username="default",
+    password=""
+)
+
+# The client can be used directly, or as a context manager.
+# The context manager will ensure that the HTTP client resources
+# are properly cleaned-up on exit.
+with ClickHouseClient(**credentials) as client:
+    # `.bytes()` and `.text()` return the raw response content from the database.
+    # `.json()` sets the format to `JSONEachRow` and parse the response content.
+    client.bytes("SELECT arrayJoin([1, 2, 3]) AS a")
+    # b'1\n2\n3\n'
+    client.text("SELECT arrayJoin([1, 2, 3]) AS a")
+    # '1\n2\n3\n'
+    client.json("SELECT arrayJoin([1, 2, 3]) AS a")
+    # [{'a': 1}, {'a': 2}, {'a': 3}]
+
+    # `.iter_bytes()`, `.iter_text()` and `.iter_json()` return the response content
+    # as it is received from the database, without buffering the entire response.
+    # `.iter_text()` iterates on the line of the response.
+    list(client.iter_bytes("SELECT arrayJoin([1, 2, 3]) AS a"))
+    # [b'1\n2\n3\n', b'']
+    list(client.iter_text("SELECT arrayJoin([1, 2, 3]) AS a"))
+    # ['1\n', '2\n', '3\n']
+    list(client.iter_json("SELECT arrayJoin([1, 2, 3]) AS a"))
+    # [{'a': 1}, {'a': 2}, {'a': 3}]
+
+    # In addition to the query, the following arguments can be set:
+    # - `params`: a mapping of query parameters to their values.
+    # - `data`: a bytes, string or an interator of bytes to send in the request body.
+    # - `settings`: ClickHouse settings (e.g. `{"default_format": "JSONEachRow"`).
+    params = {"table": "test_pych"}
     client.text('''
         CREATE TABLE {table:Identifier} (a Int64, b Int64)
         ENGINE MergeTree() ORDER BY (a, b)
     ''', params)
-    client.text("INSERT INTO {table:Identifier} VALUES", params, "(1, 2), (3, 4)")
-    client.text("INSERT INTO {table:Identifier} VALUES", params, [b"(5, 6)", b"(7, 8)"])
+    client.text("INSERT INTO {table:Identifier} VALUES", params, "(1, 2)")
+    client.text("INSERT INTO {table:Identifier} VALUES", params, [b"(3, 4)", b"(5, 6)"])
     client.json("SELECT * FROM {table:Identifier} ORDER BY a", params)
-# [{'a': '1', 'b': '2'}, {'a': '3', 'b': '4'}, {'a': '5', 'b': '6'}, {'a': '7', 'b': '8'}]
+    # [{'a': '1', 'b': '2'}, {'a': '3', 'b': '4'}, {'a': '5', 'b': '6'}]
+
+# `AsyncClickHouseClient` offers the same interface, in an asynchronous fashion.
 ```
 
 ### Command-line interface
 
 ```bash
-pipx install pych-client
 pych-client --help
 ```
 
