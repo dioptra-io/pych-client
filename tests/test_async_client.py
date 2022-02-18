@@ -1,3 +1,8 @@
+import pytest
+
+from pych_client.exceptions import ClickHouseException
+
+
 async def test_execute_bytes(async_client):
     assert await async_client.bytes("SELECT arrayJoin([1, 2, 3])") == b"1\n2\n3\n"
 
@@ -34,3 +39,14 @@ async def test_execute_json_iter(async_client):
 
 async def test_execute_json_int64(async_client):
     assert await async_client.json("SELECT toInt64(1) AS x") == [{"x": 1}]
+
+
+async def test_execute_json_params(async_client):
+    assert await async_client.json("SELECT {val:Int64} AS x", {"val": 42}) == [
+        {"x": 42}
+    ]
+
+
+async def test_execute_json_exception(async_client):
+    with pytest.raises(ClickHouseException):
+        await async_client.json("SELECT * FROM invalid_table")
