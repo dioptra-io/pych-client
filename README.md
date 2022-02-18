@@ -24,7 +24,7 @@ pip install pych-client[orjson]
 ## Usage
 
 ```python
-from pych_client import ClickHouseClient
+from pych_client import AsyncClickHouseClient, ClickHouseClient
 
 # See "Credential provider chain" for more information on credential specification.
 credentials = dict(
@@ -71,7 +71,13 @@ with ClickHouseClient(**credentials) as client:
     client.json("SELECT * FROM {table:Identifier} ORDER BY a", params)
     # [{'a': '1', 'b': '2'}, {'a': '3', 'b': '4'}, {'a': '5', 'b': '6'}]
 
-# `AsyncClickHouseClient` offers the same interface, in an asynchronous fashion.
+# `AsyncClickHouseClient` offers the same methods:
+async with AsyncClickHouseClient(**credentials) as client:
+    # Example usage for `.json()` and `.iter_json()`:
+    await client.json("SELECT arrayJoin([1, 2, 3]) AS a")
+    # [{'a': 1}, {'a': 2}, {'a': 3}]
+    async for row in client.iter_json("SELECT arrayJoin([1, 2, 3]) AS a"):
+        ...
 ```
 
 ### Command-line interface
