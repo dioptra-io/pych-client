@@ -72,7 +72,7 @@ class AsyncClickHouseClient:
         try:
             r.raise_for_status()
         except httpx.HTTPStatusError as e:
-            raise ClickHouseException(r.text) from e
+            raise ClickHouseException(query, r.text) from e
         return r
 
     async def stream(
