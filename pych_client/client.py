@@ -16,20 +16,6 @@ except ModuleNotFoundError:
 
 
 class ClickHouseClient:
-    """
-    >>> params = {"table": "test_pych"}
-    >>> with ClickHouseClient() as client:
-    ...     _ = client.text("DROP TABLE IF EXISTS {table:Identifier}", params)
-    ...     _ = client.text('''
-    ...         CREATE TABLE {table:Identifier} (a Int64, b Int64)
-    ...         ENGINE MergeTree() ORDER BY (a, b)
-    ...     ''', params)
-    ...     _ = client.text("INSERT INTO {table:Identifier} VALUES", params, "(1, 2), (3, 4)")
-    ...     _ = client.text("INSERT INTO {table:Identifier} VALUES", params, [b"(5, 6)", b"(7, 8)"])
-    ...     client.json("SELECT * FROM {table:Identifier} ORDER BY a", params)
-    [{'a': '1', 'b': '2'}, {'a': '3', 'b': '4'}, {'a': '5', 'b': '6'}, {'a': '7', 'b': '8'}]
-    """
-
     def __init__(
         self,
         base_url: Optional[str] = None,
