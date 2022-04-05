@@ -1,7 +1,6 @@
 # pych-client
 
 [![Coverage][coverage-badge]][coverage-url]
-[![PyPI Status][pypi-workflow-badge]][pypi-workflow-url]
 [![Tests Status][tests-workflow-badge]][tests-workflow-url]
 [![PyPI][pypi-badge]][pypi-url]
 
@@ -105,10 +104,6 @@ The client looks for credentials in a way similar to the [AWS SDK][aws-sdk]:
 [coverage-badge]: https://img.shields.io/codecov/c/github/dioptra-io/pych-client?logo=codecov&logoColor=white
 
 [coverage-url]: https://codecov.io/gh/dioptra-io/pych-client
-
-[pypi-workflow-badge]: https://img.shields.io/github/workflow/status/dioptra-io/pych-client/PyPI?logo=github&label=pypi
-
-[pypi-workflow-url]: https://github.com/dioptra-io/pych-client/actions/workflows/pypi.yml
 
 [tests-workflow-badge]: https://img.shields.io/github/workflow/status/dioptra-io/pych-client/Tests?logo=github&label=tests
 
