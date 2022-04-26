@@ -1,7 +1,9 @@
 import atexit
 import readline
 from argparse import ArgumentParser
+from contextlib import suppress
 from pathlib import Path
+from typing import Optional, Sequence
 
 from pych_client import ClickHouseClient
 from pych_client.exceptions import ClickHouseException
@@ -9,18 +11,16 @@ from pych_client.exceptions import ClickHouseException
 HISTFILE = Path.home() / ".pych-client-history"
 
 
-def main() -> None:
+def main(args_: Optional[Sequence[str]] = None) -> None:
     parser = ArgumentParser()
     parser.add_argument("--base-url", default=None)
     parser.add_argument("--database", default=None)
     parser.add_argument("--username", default=None)
     parser.add_argument("--password", default=None)
-    args = parser.parse_args()
+    args = parser.parse_args(args_)
 
-    try:
+    with suppress(FileNotFoundError):
         readline.read_history_file(HISTFILE)
-    except FileNotFoundError:
-        pass
 
     readline.parse_and_bind("tab: complete")
     atexit.register(readline.write_history_file, HISTFILE)
