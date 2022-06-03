@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pych-client"
-version = "0.2.10"
+version = "0.2.11"
 description = "A ClickHouse client for Python, with a command-line interface."
 authors = ["Maxime Mouchet <maxime.mouchet@lip6.fr>"]
 license = "MIT"
