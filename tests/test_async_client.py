@@ -8,7 +8,7 @@ async def test_execute_bytes(async_client):
 
 
 async def test_execute_bytes_iter(async_client):
-    expected = [b"1\n2\n3\n", b""]
+    expected = [b"1\n2\n3\n"]
     actual = [x async for x in async_client.iter_bytes("SELECT arrayJoin([1, 2, 3])")]
     assert actual == expected
 

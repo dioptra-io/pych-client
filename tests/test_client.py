@@ -8,7 +8,7 @@ def test_execute_bytes(client):
 
 
 def test_execute_bytes_iter(client):
-    expected = [b"1\n2\n3\n", b""]
+    expected = [b"1\n2\n3\n"]
     actual = list(client.iter_bytes("SELECT arrayJoin([1, 2, 3])"))
     assert actual == expected
 
