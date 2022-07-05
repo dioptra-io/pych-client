@@ -15,7 +15,7 @@ jobs:
         ports: [ '8123:8123' ]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
       - uses: dioptra-io/setup-poetry-action@v1
