@@ -31,8 +31,9 @@ class AsyncClickHouseClient:
         )
         self.client = httpx.AsyncClient(
             base_url=base_url,
-            headers={"Accept-encoding": "gzip"},
-            params={"database": database, "user": username, "password": password},
+            auth=(username, password),
+            headers={"Accept-Encoding": "gzip"},
+            params={"database": database, "enable_http_compression": True},
             timeout=httpx.Timeout(
                 connect_timeout, read=read_write_timeout, write=read_write_timeout
             ),
