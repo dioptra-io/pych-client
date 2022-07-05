@@ -47,3 +47,11 @@ def test_execute_json_exception(client):
     with pytest.raises(ClickHouseException) as exc_info:
         client.json("SELECT * FROM invalid_table")
     assert exc_info.value.code == 60
+    assert "DB::Exception" in exc_info.value.error
+
+
+def test_execute_json_iter_exception(client):
+    with pytest.raises(ClickHouseException) as exc_info:
+        list(client.iter_json("SELECT * FROM invalid_table"))
+    assert exc_info.value.code == 60
+    assert "DB::Exception" in exc_info.value.error

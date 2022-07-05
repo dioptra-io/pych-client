@@ -3,9 +3,14 @@ from types import TracebackType
 from typing import Any, Iterator, List, Optional, Type
 
 import httpx
+from httpx import Response
 
 from pych_client.base import get_client_args, get_credentials, get_http_params
-from pych_client.constants import DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_WRITE_TIMEOUT
+from pych_client.constants import (
+    CLICKHOUSE_EXCEPTION_CODE_HEADER,
+    DEFAULT_CONNECT_TIMEOUT,
+    DEFAULT_READ_WRITE_TIMEOUT,
+)
 from pych_client.exceptions import ClickHouseException
 from pych_client.typing import Data, Params, Settings
 
@@ -64,10 +69,7 @@ class ClickHouseClient:
             content=data,  # type: ignore
             params=get_http_params(query, params, settings),
         )
-        try:
-            r.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            raise ClickHouseException(r, query) from e
+        raise_for_status(r, query)
         return r
 
     def stream(
@@ -101,6 +103,7 @@ class ClickHouseClient:
         settings: Settings = None,
     ) -> Iterator[builtins.bytes]:
         with self.stream(query, params, data, settings) as r:
+            raise_for_status(r, query)
             yield from r.iter_bytes()
 
     def text(
@@ -120,6 +123,7 @@ class ClickHouseClient:
         settings: Settings = None,
     ) -> Iterator[str]:
         with self.stream(query, params, data, settings) as r:
+            raise_for_status(r, query)
             yield from r.iter_lines()
 
     def json(
@@ -157,3 +161,12 @@ class ClickHouseClient:
         for line in self.iter_text(query, params, data, settings):
             if line:
                 yield json.loads(line)
+
+
+def raise_for_status(response: Response, query: str) -> None:
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        code = int(response.headers[CLICKHOUSE_EXCEPTION_CODE_HEADER])
+        error = response.read().decode()
+        raise ClickHouseException(code, error, query) from e

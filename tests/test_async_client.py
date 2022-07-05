@@ -51,3 +51,11 @@ async def test_execute_json_exception(async_client):
     with pytest.raises(ClickHouseException) as exc_info:
         await async_client.json("SELECT * FROM invalid_table")
     assert exc_info.value.code == 60
+    assert "DB::Exception" in exc_info.value.error
+
+
+async def test_execute_json_iter_exception(async_client):
+    with pytest.raises(ClickHouseException) as exc_info:
+        [x async for x in async_client.iter_json("SELECT * FROM invalid_table")]
+    assert exc_info.value.code == 60
+    assert "DB::Exception" in exc_info.value.error

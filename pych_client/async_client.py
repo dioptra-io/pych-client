@@ -3,9 +3,14 @@ from types import TracebackType
 from typing import Any, AsyncIterator, List, Optional, Type
 
 import httpx
+from httpx import Response
 
 from pych_client.base import get_client_args, get_credentials, get_http_params
-from pych_client.constants import DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_WRITE_TIMEOUT
+from pych_client.constants import (
+    CLICKHOUSE_EXCEPTION_CODE_HEADER,
+    DEFAULT_CONNECT_TIMEOUT,
+    DEFAULT_READ_WRITE_TIMEOUT,
+)
 from pych_client.exceptions import ClickHouseException
 from pych_client.typing import Data, Params, Settings
 
@@ -64,10 +69,7 @@ class AsyncClickHouseClient:
             content=data,  # type: ignore
             params=get_http_params(query, params, settings),
         )
-        try:
-            r.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            raise ClickHouseException(r, query) from e
+        await raise_for_status(r, query)
         return r
 
     async def stream(
@@ -100,6 +102,7 @@ class AsyncClickHouseClient:
     ) -> AsyncIterator[builtins.bytes]:
         stream = await self.stream(query, params, data, settings)
         async with stream as r:
+            await raise_for_status(r, query)
             async for chunk in r.aiter_bytes():
                 yield chunk
 
@@ -122,6 +125,7 @@ class AsyncClickHouseClient:
     ) -> AsyncIterator[str]:
         stream = await self.stream(query, params, data, settings)
         async with stream as r:
+            await raise_for_status(r, query)
             async for line in r.aiter_lines():
                 yield line
 
@@ -160,3 +164,12 @@ class AsyncClickHouseClient:
         async for line in self.iter_text(query, params, data, settings):
             if line:
                 yield json.loads(line)
+
+
+async def raise_for_status(response: Response, query: str) -> None:
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        code = int(response.headers[CLICKHOUSE_EXCEPTION_CODE_HEADER])
+        error = (await response.aread()).decode()
+        raise ClickHouseException(code, error, query) from e
