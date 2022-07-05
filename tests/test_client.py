@@ -44,5 +44,6 @@ def test_execute_json_params(client):
 
 
 def test_execute_json_exception(client):
-    with pytest.raises(ClickHouseException):
+    with pytest.raises(ClickHouseException) as exc_info:
         client.json("SELECT * FROM invalid_table")
+    assert exc_info.value.code == 60

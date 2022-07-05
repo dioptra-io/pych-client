@@ -48,5 +48,6 @@ async def test_execute_json_params(async_client):
 
 
 async def test_execute_json_exception(async_client):
-    with pytest.raises(ClickHouseException):
+    with pytest.raises(ClickHouseException) as exc_info:
         await async_client.json("SELECT * FROM invalid_table")
+    assert exc_info.value.code == 60
