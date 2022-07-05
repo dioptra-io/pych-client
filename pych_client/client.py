@@ -4,7 +4,7 @@ from typing import Any, Iterator, List, Optional, Type
 
 import httpx
 
-from pych_client.base import get_credentials, get_http_params
+from pych_client.base import get_client_args, get_credentials, get_http_params
 from pych_client.constants import DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_WRITE_TIMEOUT
 from pych_client.exceptions import ClickHouseException
 from pych_client.typing import Data, Params, Settings
@@ -30,19 +30,6 @@ class ClickHouseClient:
         base_url, database, username, password = get_credentials(
             base_url, database, username, password
         )
-        self.client = httpx.Client(
-            base_url=base_url,
-            auth=(username, password),
-            headers={"Accept-Encoding": "gzip"},
-            params={
-                "database": database,
-                "enable_http_compression": True,
-                **(settings or {}),
-            },
-            timeout=httpx.Timeout(
-                connect_timeout, read=read_write_timeout, write=read_write_timeout
-            ),
-        )
         self.config = {
             "base_url": base_url,
             "database": database,
@@ -52,6 +39,7 @@ class ClickHouseClient:
             "connect_timeout": connect_timeout,
             "read_write_timeout": read_write_timeout,
         }
+        self.client = httpx.Client(**get_client_args(**self.config))  # type: ignore
 
     def __enter__(self) -> "ClickHouseClient":
         return self

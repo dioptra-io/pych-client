@@ -2,6 +2,8 @@ import json
 import os
 from typing import Optional, Tuple
 
+import httpx
+
 from pych_client.constants import (
     BASE_URL_ENV,
     CREDENTIALS_FILE,
@@ -15,8 +17,7 @@ from pych_client.constants import (
 )
 from pych_client.logger import logger
 from pych_client.typing import Params, Settings
-
-# TODO: Benchmark different functions
+from pych_client.version import __version__
 
 
 def get_credentials(
@@ -56,6 +57,34 @@ def get_credentials(
             credentials.get("password", DEFAULT_PASSWORD),
         )
     return DEFAULT_BASE_URL, DEFAULT_DATABASE, DEFAULT_USERNAME, DEFAULT_PASSWORD
+
+
+def get_client_args(
+    *,
+    base_url: str,
+    database: str,
+    username: str,
+    password: str,
+    settings: Settings,
+    connect_timeout: Optional[float],
+    read_write_timeout: Optional[float],
+) -> dict:
+    return {
+        "auth": (username, password),
+        "base_url": base_url,
+        "headers": {
+            "Accept-Encoding": "gzip",
+            "User-Agent": f"pych-client/{__version__}",
+        },
+        "params": {
+            "database": database,
+            "enable_http_compression": True,
+            **(settings or {}),
+        },
+        "timeout": httpx.Timeout(
+            connect_timeout, read=read_write_timeout, write=read_write_timeout
+        ),
+    }
 
 
 def get_http_params(query: str, params: Params, settings: Settings) -> dict:
