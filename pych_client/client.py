@@ -23,6 +23,7 @@ class ClickHouseClient:
         username: Optional[str] = None,
         password: Optional[str] = None,
         *,
+        settings: Settings = None,
         connect_timeout: Optional[float] = DEFAULT_CONNECT_TIMEOUT,
         read_write_timeout: Optional[float] = DEFAULT_READ_WRITE_TIMEOUT,
     ):
@@ -33,7 +34,11 @@ class ClickHouseClient:
             base_url=base_url,
             auth=(username, password),
             headers={"Accept-Encoding": "gzip"},
-            params={"database": database, "enable_http_compression": True},
+            params={
+                "database": database,
+                "enable_http_compression": True,
+                **(settings or {}),
+            },
             timeout=httpx.Timeout(
                 connect_timeout, read=read_write_timeout, write=read_write_timeout
             ),
@@ -43,6 +48,7 @@ class ClickHouseClient:
             "database": database,
             "username": username,
             "password": password,
+            "settings": settings,
             "connect_timeout": connect_timeout,
             "read_write_timeout": read_write_timeout,
         }
