@@ -141,9 +141,6 @@ class ClickHouseClient:
         }
         result = self.text(query, params, data, settings)
         return [json.loads(line) for line in result.split("\n") if line]
-        # except JSONDecodeError as e:
-        #     # TODO: How to handle exception formatting in this case?
-        #     raise ClickHouseException(result) from e
 
     def iter_json(
         self,
