@@ -12,6 +12,7 @@ from pych_client.constants import (
     DEFAULT_READ_WRITE_TIMEOUT,
 )
 from pych_client.exceptions import ClickHouseException
+from pych_client.line_decoder import LineDecoder
 from pych_client.typing import Data, Params, Settings
 
 try:
@@ -126,7 +127,13 @@ class AsyncClickHouseClient:
         stream = await self.stream(query, params, data, settings)
         async with stream as r:
             await raise_for_status(r, query)
-            async for line in r.aiter_lines():
+            # Faster implementation of httpx.Response.iter_text()
+            # based on a custom version of LineDecoder.
+            decoder = LineDecoder()
+            async for text in r.aiter_text():
+                for line in decoder.decode(text):
+                    yield line
+            for line in decoder.flush():
                 yield line
 
     async def json(

@@ -18,7 +18,7 @@ def test_execute_text(client):
 
 
 def test_execute_text_iter(client):
-    expected = ["1\n", "2\n", "3\n"]
+    expected = ["1", "2", "3"]
     actual = list(client.iter_text("SELECT arrayJoin([1, 2, 3])"))
     assert actual == expected
 

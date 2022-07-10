@@ -52,7 +52,7 @@ with ClickHouseClient(**credentials) as client:
     list(client.iter_bytes("SELECT arrayJoin([1, 2, 3]) AS a"))
     # [b'1\n2\n3\n', b'']
     list(client.iter_text("SELECT arrayJoin([1, 2, 3]) AS a"))
-    # ['1\n', '2\n', '3\n']
+    # ['1', '2', '3']
     list(client.iter_json("SELECT arrayJoin([1, 2, 3]) AS a"))
     # [{'a': 1}, {'a': 2}, {'a': 3}]
 

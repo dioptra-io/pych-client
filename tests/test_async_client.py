@@ -18,7 +18,7 @@ async def test_execute_text(async_client):
 
 
 async def test_execute_text_iter(async_client):
-    expected = ["1\n", "2\n", "3\n"]
+    expected = ["1", "2", "3"]
     actual = [x async for x in async_client.iter_text("SELECT arrayJoin([1, 2, 3])")]
     assert actual == expected
 
