@@ -67,7 +67,7 @@ class ClickHouseClient:
     ) -> httpx.Response:
         r = self.client.post(
             "/",
-            content=data,  # type: ignore
+            content=data,
             params=get_http_params(query, params, settings),
         )
         raise_for_status(r, query)
@@ -83,7 +83,7 @@ class ClickHouseClient:
         return self.client.stream(
             "POST",
             "/",
-            content=data,  # type: ignore
+            content=data,
             params=get_http_params(query, params, settings),
         )
 

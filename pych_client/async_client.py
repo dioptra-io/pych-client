@@ -67,7 +67,7 @@ class AsyncClickHouseClient:
     ) -> httpx.Response:
         r = await self.client.post(
             "/",
-            content=data,  # type: ignore
+            content=data,
             params=get_http_params(query, params, settings),
         )
         await raise_for_status(r, query)
