@@ -105,7 +105,7 @@ The client looks for credentials in a way similar to the [AWS SDK][aws-sdk]:
 
 [coverage-url]: https://codecov.io/gh/dioptra-io/pych-client
 
-[tests-workflow-badge]: https://img.shields.io/github/workflow/status/dioptra-io/pych-client/Tests?logo=github&label=tests
+[tests-workflow-badge]: https://img.shields.io/github/actions/workflow/status/dioptra-io/pych-client/tests.yml?logo=github&label=tests
 
 [tests-workflow-url]: https://github.com/dioptra-io/pych-client/actions/workflows/tests.yml
 
