@@ -9,6 +9,14 @@ jobs:
       clickhouse:
         image: clickhouse/clickhouse-server:latest
         ports: [ '8123:8123' ]
+        env:
+          CLICKHOUSE_USER: default
+          CLICKHOUSE_PASSWORD: ""   # empty if your ClickHouse allows it
+          CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"  # enable user management
+    env:
+      PYCH_USERNAME: default
+      PYCH_PASSWORD: ""
+      PYCH_BASE_URL: http://localhost:8123
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
