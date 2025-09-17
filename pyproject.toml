@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pych-client-elena"
-version = "0.4.0"
+version = "0.4.1"
 description = "A ClickHouse client for Python, with a command-line interface."
 authors = ["Maxime Mouchet <maxime.mouchet@lip6.fr>"]
 license = "MIT"
