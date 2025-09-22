@@ -11,7 +11,7 @@ jobs:
         ports: [ '8123:8123' ]
         env:
           CLICKHOUSE_USER: default
-          CLICKHOUSE_PASSWORD: ""   # empty if your ClickHouse allows it
+          CLICKHOUSE_PASSWORD: ""   # ClickHouse accepts an empty password
           CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"  # enable user management
     env:
       PYCH_USERNAME: default
