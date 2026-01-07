@@ -8,9 +8,10 @@ readme = "README.md"
 homepage = "https://github.com/dioptra-io/pych-client"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 httpx = "^0.25.0"
 orjson = {version = "^3.9.10", optional = true}
+filelock = "^3.20.1"
 
 [tool.poetry.dev-dependencies]
 bumpversion = "^0.6.0"
